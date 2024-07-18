@@ -54,7 +54,7 @@ async function getMetadata(cid) {
   const stream = ipfsClient.cat(cid);
   let data = '';
   for await (const chunk of stream) {
-      data += chunk.toString();
+    data += chunk.toString();
   }
   return JSON.parse(data);
 }
@@ -136,16 +136,31 @@ async function startIpfs() {
   });
 
   // Rota protegida para remover arquivo do IPFS
-  app.delete('/file/:cid', authenticateToken, async (req, res) => {
-    const { cid } = req.params;
+  app.post('/delete', async (req, res) => {
     try {
+      const { cid } = req.body;
+      let fileExists = false;
+
+      // Verifica se o arquivo existe no IPFS
+      for await (const file of ipfs.pin.ls()) {
+        if (file.cid.toString() === cid) {
+          fileExists = true;
+          break;
+        }
+      }
+
+      if (!fileExists) {
+        return res.status(404).send({ message: 'Arquivo não encontrado' });
+      }
+
+      // Remove o arquivo do IPFS
       await ipfs.pin.rm(cid);
-      res.send({ message: 'File unpinned successfully' });
+      await ipfs.repo.gc();
+      res.send({ message: 'Arquivo e metadado excluido com sucesso' });
     } catch (err) {
-      res.status(500).send({ error: 'Error unpinning file', details: err.message });
+      res.status(500).send(err.toString());
     }
   });
-
   // Rota protegida para listar todos os arquivos no IPFS
   app.get('/files', authenticateToken, async (req, res) => {
     const pins = await ipfs.pin.ls();
@@ -159,12 +174,12 @@ async function startIpfs() {
   });
 
   app.listen(4000, () => {
-    console.log('Server is running on port 4000');
+    console.log('Servidor rodando na porta 4000');
   });
 }
 
 startIpfs().catch(err => {
-  console.error('Error starting IPFS node:', err);
+  console.error('Erro de inicio no IPFS:', err);
 });
 
 
