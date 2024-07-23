@@ -1,0 +1,67 @@
+# Instalação de três nós IPFS no Docker
+
+Para criar três nós IPFS privados utilizando o Kubo com contêineres Docker e 
+volumes compartilhados para as áreas ipfs_staging e ipfs_data, você pode seguir os passos abaixo:
+
+
+## Instalar o Docker-compose Atualizado
+
+sudo apt-get update
+sudo apt-get upgrade docker-ce
+
+Se fornecessário instalar do zero:
+
+<pre>
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+docker-compose --version
+systemctl start docker
+systemctl enable docker
+docker-compose --version
+</pre>
+
+## Gerar os conteiners
+<pre>
+docker-compose up -d
+</pre>
+
+## Reinicializar os conteiners
+<pre>
+docker-compose down
+docker-compose up -d
+</pre>
+
+## Inicializar e Configurar os Nós IPFS
+<pre>
+docker exec -it ipfs_node1 ipfs init
+docker exec -it ipfs_node1 ipfs bootstrap rm --all
+docker exec -it ipfs_node1 ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
+docker exec -it ipfs_node1 ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "POST", "GET"]'
+
+docker exec -it ipfs_node2 ipfs init
+docker exec -it ipfs_node2 ipfs bootstrap rm --all
+docker exec -it ipfs_node2 ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
+docker exec -it ipfs_node2 ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "POST", "GET"]'
+
+docker exec -it ipfs_node3 ipfs init
+docker exec -it ipfs_node3 ipfs bootstrap rm --all
+docker exec -it ipfs_node3 ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
+docker exec -it ipfs_node3 ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "POST", "GET"]'
+</pre>
+
+## Verificar as conexões
+<pre>
+docker exec -it ipfs_node1 ipfs id
+docker exec -it ipfs_node2 ipfs id
+docker exec -it ipfs_node3 ipfs id
+
+docker exec -it ipfs_node1 ipfs swarm connect /ip4/<IP2>/tcp/4001/ipfs/<PEER_ID_NODE2>
+docker exec -it ipfs_node1 ipfs swarm connect /ip4/<IP3>/tcp/4001/ipfs/<PEER_ID_NODE3>
+
+docker exec -it ipfs_node2 ipfs swarm connect /ip4/<IP1>/tcp/4001/ipfs/<PEER_ID_NODE1>
+docker exec -it ipfs_node2 ipfs swarm connect /ip4/<IP3>/tcp/4001/ipfs/<PEER_ID_NODE3>
+
+docker exec -it ipfs_node3 ipfs swarm connect /ip4/<IP1>/tcp/4001/ipfs/<PEER_ID_NODE1>
+docker exec -it ipfs_node3 ipfs swarm connect /ip4/<IP2>/tcp/4001/ipfs/<PEER_ID_NODE2>
+</pre>

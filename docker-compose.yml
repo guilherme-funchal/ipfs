@@ -1,0 +1,70 @@
+services:
+  ipfs-server1:
+    build:
+      context: ./ipfs-server
+      dockerfile: Dockerfile
+    container_name: ipfs-server1
+    volumes:
+      - ipfs-server1-data:/data/ipfs
+      - ./ipfs-server/swarm.key:/data/ipfs/swarm.key
+    networks:
+      - ipfs-network
+    ports:
+      - "4001:4001"
+      - "5001:5001"
+      - "8080:8080"
+
+  ipfs-server2:
+    build:
+      context: ./ipfs-server
+      dockerfile: Dockerfile
+    container_name: ipfs-server2
+    volumes:
+      - ipfs-server2-data:/data/ipfs
+      - ./ipfs-server/swarm.key:/data/ipfs/swarm.key
+    networks:
+      - ipfs-network
+    ports:
+      - "4002:4001"
+      - "5002:5001"
+      - "8082:8080"
+
+  ipfs-server3:
+    build:
+      context: ./ipfs-server
+      dockerfile: Dockerfile
+    container_name: ipfs-server3
+    volumes:
+      - ipfs-server3-data:/data/ipfs
+      - ./ipfs-server/swarm.key:/data/ipfs/swarm.key
+    networks:
+      - ipfs-network
+    ports:
+      - "4003:4001"
+      - "5003:5001"
+      - "8083:8080"
+
+  ipfs-client:
+    build:
+      context: ./ipfs-client
+      dockerfile: Dockerfile
+    container_name: ipfs-client
+    networks:
+      - ipfs-network
+    ports:
+      - "6000:6000"
+    environment:
+      - IPFS_API_URL=http://ipfs-server1:5001
+    depends_on:
+      - ipfs-server1
+      - ipfs-server2
+      - ipfs-server3
+
+volumes:
+  ipfs-server1-data:
+  ipfs-server2-data:
+  ipfs-server3-data:
+
+networks:
+  ipfs-network:
+    driver: bridge

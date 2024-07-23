@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ipfs-client 
+    ports:
+      - "6000:6000"
+    volumes:
+      - /uploads
+    networks:
+      - ipfs-network
+    environment:
+      - IPFS_API_URL=http://ipfs_node1:5001
