@@ -1,6 +1,6 @@
 # Instalação dos IPFS Client e Server
 
-## Crie um Banco de dados Postgres e importte as tabelas do diretório BD
+## Crie um Banco de dados Postgres e importe as tabelas do diretório BD
 Pode ser usado o comando pg_restore em banco de dados existente conforme abaixo : 
 
 ```
