@@ -48,6 +48,5 @@ docker-compose up --build
 
 ## Testar as chamadas de API
 
-### Importar no Insomnia o arquivo da pasta insomnia
-
-### Na autenticação é necessário passar como Token Bearer os endereço de wallet contidos na tabela "tokens"
+1)Importar no Insomnia o arquivo da pasta insomnia
+2)Na autenticação é necessário passar como Token Bearer os endereço de wallet contidos na tabela "tokens"
