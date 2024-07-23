@@ -5,7 +5,7 @@
 -- Dumped from database version 16.3 (Debian 16.3-1.pgdg120+1)
 -- Dumped by pg_dump version 16.3 (Ubuntu 16.3-1.pgdg24.04+1)
 
--- Started on 2024-07-23 10:38:54 -03
+-- Started on 2024-07-23 11:36:43 -03
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,6 +21,46 @@ SET row_security = off;
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
+
+--
+-- TOC entry 222 (class 1259 OID 16424)
+-- Name: contracts; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.contracts (
+    id integer NOT NULL,
+    contract text,
+    wallet text,
+    date timestamp with time zone
+);
+
+
+ALTER TABLE public.contracts OWNER TO postgres;
+
+--
+-- TOC entry 221 (class 1259 OID 16423)
+-- Name: contracts_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.contracts_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.contracts_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3390 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: contracts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.contracts_id_seq OWNED BY public.contracts.id;
+
 
 --
 -- TOC entry 216 (class 1259 OID 16390)
@@ -54,7 +94,7 @@ CREATE SEQUENCE public.file_metadata_id_seq
 ALTER SEQUENCE public.file_metadata_id_seq OWNER TO postgres;
 
 --
--- TOC entry 3380 (class 0 OID 0)
+-- TOC entry 3391 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: file_metadata_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -93,7 +133,7 @@ CREATE SEQUENCE public.tokens_id_seq
 ALTER SEQUENCE public.tokens_id_seq OWNER TO postgres;
 
 --
--- TOC entry 3381 (class 0 OID 0)
+-- TOC entry 3392 (class 0 OID 0)
 -- Dependencies: 218
 -- Name: tokens_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -114,7 +154,7 @@ CREATE TABLE public.transactions (
     hash text,
     date timestamp with time zone,
     towallet text,
-    "tokenURI" text,
+    tokenuri text,
     tokenid text
 );
 
@@ -138,7 +178,7 @@ CREATE SEQUENCE public.transactions_id_seq
 ALTER SEQUENCE public.transactions_id_seq OWNER TO postgres;
 
 --
--- TOC entry 3382 (class 0 OID 0)
+-- TOC entry 3393 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: transactions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -147,7 +187,15 @@ ALTER SEQUENCE public.transactions_id_seq OWNED BY public.transactions.id;
 
 
 --
--- TOC entry 3213 (class 2604 OID 16393)
+-- TOC entry 3221 (class 2604 OID 16427)
+-- Name: contracts id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.contracts ALTER COLUMN id SET DEFAULT nextval('public.contracts_id_seq'::regclass);
+
+
+--
+-- TOC entry 3218 (class 2604 OID 16393)
 -- Name: file_metadata id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -155,7 +203,7 @@ ALTER TABLE ONLY public.file_metadata ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
--- TOC entry 3214 (class 2604 OID 16406)
+-- TOC entry 3219 (class 2604 OID 16406)
 -- Name: tokens id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -163,7 +211,7 @@ ALTER TABLE ONLY public.tokens ALTER COLUMN id SET DEFAULT nextval('public.token
 
 
 --
--- TOC entry 3215 (class 2604 OID 16418)
+-- TOC entry 3220 (class 2604 OID 16418)
 -- Name: transactions id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -171,7 +219,18 @@ ALTER TABLE ONLY public.transactions ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
--- TOC entry 3370 (class 0 OID 16390)
+-- TOC entry 3384 (class 0 OID 16424)
+-- Dependencies: 222
+-- Data for Name: contracts; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.contracts (id, contract, wallet, date) FROM stdin;
+1	0x5FbDB2315678afecb367f032d93F642f64180aa3	0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266	2024-07-23 14:27:19+00
+\.
+
+
+--
+-- TOC entry 3378 (class 0 OID 16390)
 -- Dependencies: 216
 -- Data for Name: file_metadata; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -182,7 +241,7 @@ COPY public.file_metadata (id, hash, metadata, filecid) FROM stdin;
 
 
 --
--- TOC entry 3371 (class 0 OID 16402)
+-- TOC entry 3379 (class 0 OID 16402)
 -- Dependencies: 217
 -- Data for Name: tokens; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -197,17 +256,30 @@ COPY public.tokens (id, token, pk) FROM stdin;
 
 
 --
--- TOC entry 3374 (class 0 OID 16415)
+-- TOC entry 3382 (class 0 OID 16415)
 -- Dependencies: 220
 -- Data for Name: transactions; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.transactions (id, type, value, fromwallet, hash, date, towallet, "tokenURI", tokenid) FROM stdin;
+COPY public.transactions (id, type, value, fromwallet, hash, date, towallet, tokenuri, tokenid) FROM stdin;
+1	Mint	1000000000000000000000	0x90F79bf6EB2c4f870365E785982E1f101E93b906	0x891c7cf2356b417beaecc4f28d9110557f76f58ee461fbf22af6b12845a59ed4	2024-07-23 14:28:36+00	0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266	-	-
+2	Mint	1000000000000000000000	0x90F79bf6EB2c4f870365E785982E1f101E93b906	0xb44c3ab6b60585f246daa377e784118da0fbc13a33609e2ba9b4f1ab67240cf8	2024-07-23 14:28:41+00	0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266	-	-
+3	Burn	100000000000000000000	0x90F79bf6EB2c4f870365E785982E1f101E93b906	0x8f0b965fd913f3342885cc054f2879ba6ab93aa1936a779220631794d07637c5	2024-07-23 14:29:09+00	0x90F79bf6EB2c4f870365E785982E1f101E93b906	-	-
+4	Burn	100000000000000000000	0x90F79bf6EB2c4f870365E785982E1f101E93b906	0x50bbfc5992d3be1c72e70a37c8bb4ce2c22d800b153a44dcad5657d69457636f	2024-07-23 14:29:12+00	0x90F79bf6EB2c4f870365E785982E1f101E93b906	-	-
 \.
 
 
 --
--- TOC entry 3383 (class 0 OID 0)
+-- TOC entry 3394 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: contracts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.contracts_id_seq', 1, true);
+
+
+--
+-- TOC entry 3395 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: file_metadata_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -216,7 +288,7 @@ SELECT pg_catalog.setval('public.file_metadata_id_seq', 7, true);
 
 
 --
--- TOC entry 3384 (class 0 OID 0)
+-- TOC entry 3396 (class 0 OID 0)
 -- Dependencies: 218
 -- Name: tokens_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -225,16 +297,25 @@ SELECT pg_catalog.setval('public.tokens_id_seq', 5, true);
 
 
 --
--- TOC entry 3385 (class 0 OID 0)
+-- TOC entry 3397 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: transactions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.transactions_id_seq', 1, false);
+SELECT pg_catalog.setval('public.transactions_id_seq', 4, true);
 
 
 --
--- TOC entry 3217 (class 2606 OID 16401)
+-- TOC entry 3233 (class 2606 OID 16431)
+-- Name: contracts contracts_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.contracts
+    ADD CONSTRAINT contracts_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3223 (class 2606 OID 16401)
 -- Name: file_metadata file_metadata_filecid_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -243,7 +324,7 @@ ALTER TABLE ONLY public.file_metadata
 
 
 --
--- TOC entry 3219 (class 2606 OID 16399)
+-- TOC entry 3225 (class 2606 OID 16399)
 -- Name: file_metadata file_metadata_hash_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -252,7 +333,7 @@ ALTER TABLE ONLY public.file_metadata
 
 
 --
--- TOC entry 3221 (class 2606 OID 16397)
+-- TOC entry 3227 (class 2606 OID 16397)
 -- Name: file_metadata file_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -261,7 +342,7 @@ ALTER TABLE ONLY public.file_metadata
 
 
 --
--- TOC entry 3223 (class 2606 OID 16413)
+-- TOC entry 3229 (class 2606 OID 16413)
 -- Name: tokens tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -270,7 +351,7 @@ ALTER TABLE ONLY public.tokens
 
 
 --
--- TOC entry 3225 (class 2606 OID 16422)
+-- TOC entry 3231 (class 2606 OID 16422)
 -- Name: transactions transactions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -278,7 +359,7 @@ ALTER TABLE ONLY public.transactions
     ADD CONSTRAINT transactions_pkey PRIMARY KEY (id);
 
 
--- Completed on 2024-07-23 10:38:54 -03
+-- Completed on 2024-07-23 11:36:43 -03
 
 --
 -- PostgreSQL database dump complete
