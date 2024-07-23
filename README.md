@@ -10,7 +10,7 @@ pg_restore -U postgres -d srv -v backup.dump
 
 ### IPFS Client
 
-Ajustar o .env no diretório ipfs-client conforme abaixo :
+1)Ajustar o .env no diretório ipfs-client conforme abaixo :
 
 ```
 DB_USER=Usuário do Postgres
@@ -18,6 +18,19 @@ DB_HOST=Endereço do banco
 DB_DATABASE=Nome do banco de dados
 DB_PASSWORD=Senha
 DB_PORT=Porta
+```
+
+2)A porta padrão da API no Nodejs e no Docker é 6000, se precisar ajustar é preciso alterar a linha do docker-compose.yml conforme abaixo :
+
+```
+ ports:
+      - "6000:6000"
+```
+
+3)Ajustar a porta padrão no arquivo index.js conforme abaixo:
+
+```
+const port = 6000; 
 ```
 
 ### IPFS Server
