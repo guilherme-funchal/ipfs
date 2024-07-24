@@ -76,17 +76,6 @@ const getMetadata = async (hash) => {
     }
 };
 
-// Função para remover metadados do banco de dados
-const removeMetadata = async (hash) => {
-    try {
-        //ipfs.pin.rm(hash);
-        const result = await pool.query('SELECT filecid FROM file_metadata WHERE hash = $1', [hash]);
-        await ipfs.pin.rm(result.rows[0]?.filecid);
-        await pool.query('DELETE FROM file_metadata WHERE hash = $1', [hash]);
-    } catch (error) {
-        throw new Error(`Erro ao remover metadados: ${error.message}`);
-    }
-};
 
 // Função para adicionar metadados ao banco de dados
 const addMetadata = async (hash, metadata) => {
@@ -191,14 +180,34 @@ app.get('/fetch/:hash', authenticateToken, async (req, res) => {
 app.delete('/delete/:hash', authenticateToken, async (req, res) => {
     try {
         const hash = req.params.hash;
+        const result = await pool.query('SELECT hash, filecid FROM file_metadata WHERE hash = $1', [hash]);
+        const filecid = result.rows[0]?.filecid;
 
-        // Remover o arquivo do IPFS
+        await ipfs.pin.rm(hash);
+        
+        // Remover metadados associados ao arquivo
+        await ipfs.pin.rm(filecid);
+        await pool.query('DELETE FROM file_metadata WHERE filecid = $1', [filecid]);
+
+        res.status(200).json({ message: `Arquivo com hash excluído do IPFS e metadados removidos.` });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Endpoint para excluir arquivos do IPFS e remover metadados pelo metadado
+app.delete('/metadado/:filecid', authenticateToken, async (req, res) => {
+    try {
+        const filecid = req.params.filecid;
+        const result = await pool.query('SELECT hash,filecid FROM file_metadata WHERE filecid = $1', [filecid]);
+        const hash = result.rows[0]?.hash;
+
+        await ipfs.pin.rm(filecid);
         await ipfs.pin.rm(hash);
 
-        // Remover metadados associados ao arquivo
-        await removeMetadata(hash);
+        await pool.query('DELETE FROM file_metadata WHERE filecid = $1', [filecid]);
 
-        res.status(200).json({ message: `Arquivo com hash ${hash} excluído do IPFS e metadados removidos.` });
+        res.status(200).json({ message: `Arquivo com filecid excluído do IPFS.` });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
