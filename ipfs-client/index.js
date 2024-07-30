@@ -196,7 +196,7 @@ app.delete('/delete/:hash', authenticateToken, async (req, res) => {
 });
 
 // Endpoint para excluir arquivos do IPFS e remover metadados pelo metadado
-app.delete('/metadado/:filecid', authenticateToken, async (req, res) => {
+app.delete('/metadata/:filecid', authenticateToken, async (req, res) => {
     try {
         const filecid = req.params.filecid;
         const result = await pool.query('SELECT hash,filecid FROM file_metadata WHERE filecid = $1', [filecid]);
